@@ -25,11 +25,16 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void createOrder(OrderDTO orderDTO) {
         Order order = new Order();
+        // Generate order number. This is unique value. Use the current timestamp to generate this one
         String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss.SSS").format(new java.util.Date());
         order.setOrderNumber(timeStamp);
         orderRepository.save(order);
 
         List<LineItem> list = new ArrayList<>();
+        // Loop the list of items coming from front end.
+        // Convert ItemDTO to LineItem entity inside the for loop
+        // Add the LineItem entity classes to ArrayList
+        // End of the for loop, save the LineItem ArrayList using itemRepository saveAll method
         for (ItemDTO itemDTO : orderDTO.getItems()) {
             LineItem lineItem = new LineItem();
             BeanUtils.copyProperties(itemDTO, lineItem);
