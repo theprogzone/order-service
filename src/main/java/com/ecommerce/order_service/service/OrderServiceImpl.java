@@ -2,12 +2,14 @@ package com.ecommerce.order_service.service;
 
 import com.ecommerce.order_service.dto.ItemDTO;
 import com.ecommerce.order_service.dto.OrderDTO;
+import com.ecommerce.order_service.event.OrderEvent;
 import com.ecommerce.order_service.model.LineItem;
 import com.ecommerce.order_service.model.Order;
 import com.ecommerce.order_service.repository.ItemRepository;
 import com.ecommerce.order_service.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -21,6 +23,8 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
 
     private final ItemRepository itemRepository;
+
+    private final KafkaTemplate<String, OrderEvent> kafkaTemplate;
 
     @Override
     public void createOrder(OrderDTO orderDTO) {
@@ -42,5 +46,6 @@ public class OrderServiceImpl implements OrderService {
             list.add(lineItem);
         }
         itemRepository.saveAll(list);
+        kafkaTemplate.send("emailTopic", new OrderEvent(timeStamp));
     }
 }

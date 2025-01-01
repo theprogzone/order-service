@@ -1,19 +1,27 @@
 spring:
   application:
     name: order-service
-    datasource:
-      url: jdbc:mysql://localhost:3306/orders_db
-      username: root
-      password: root
-      driverClassName: com.mysql.cj.jdbc.Driver
+  datasource:
+    url: jdbc:mysql://localhost:3306/orders_db
+    username: root
+    password: root
+    driverClassName: com.mysql.cj.jdbc.Driver
 
     jpa:
       spring.jpa.database-platform: org.hibernate.dialect.MySQL8Dialect
       hibernate:
         ddl-auto: none
 
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer.key-serializer: org.apache.kafka.common.serialization.StringSerializer
+    producer.value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    producer.properties.spring.json.type.mapping: event:com.ecommerce.order_service.event.OrderEvent
+
 server:
   port: 0
+  servlet:
+    context-path: /order
 
 eureka:
   client:
